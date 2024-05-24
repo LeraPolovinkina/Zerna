@@ -1,0 +1,142 @@
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
+{#    <title>Upload Photo</title>#}
+{#    <link rel="stylesheet" href="/static/css/styles.css">#}
+{#    <style>#}
+{#        #uploadedPhotos {#}
+{#            display: flex;#}
+{#            justify-content: center;#}
+{#            align-items: center;#}
+{#            flex-wrap: wrap;#}
+{#            margin-top: 20px;#}
+{#        }#}
+{#        #uploadedPhotos img {#}
+{#            max-width: 200px;#}
+{#            max-height: 200px;#}
+{#            margin: 10px;#}
+{#        }#}
+{#        #predictionResult {#}
+{#            margin-top: 20px;#}
+{#            font-size: 1.2em;#}
+{#            font-weight: bold;#}
+{#        }#}
+{#    </style>#}
+{#</head>#}
+{#<body>#}
+{#    <div class="container">#}
+{#        <h1>Upload Photo</h1>#}
+{#        <form id="uploadForm" enctype="multipart/form-data">#}
+{#            {% csrf_token %}#}
+{#            <input type="file" id="photoInput" name="image" accept="image/*">#}
+{#            <button type="button" onclick="uploadImage()">Upload</button>#}
+{#        </form>#}
+{##}
+{#        <div id="uploadedPhotos"></div>#}
+{#        <div id="predictionResult"></div>#}
+{#    </div>#}
+{##}
+{#    <script>#}
+{#        async function uploadImage() {#}
+{#            const form = document.getElementById("uploadForm");#}
+{#            const formData = new FormData(form);#}
+{##}
+{#            const response = await fetch('/classify/', {#}
+{#                method: 'POST',#}
+{#                body: formData,#}
+{#                headers: {#}
+{#                    'X-CSRFToken': '{{ csrf_token }}'#}
+{#                }#}
+{#            });#}
+{##}
+{#            const result = await response.json();#}
+{##}
+{#            const uploadedPhotosDiv = document.getElementById("uploadedPhotos");#}
+{#            uploadedPhotosDiv.innerHTML = "";#}
+{#            const image = document.createElement("img");#}
+{#            image.src = URL.createObjectURL(form.querySelector('#photoInput').files[0]);#}
+{#            image.alt = form.querySelector('#photoInput').files[0].name;#}
+{#            uploadedPhotosDiv.appendChild(image);#}
+{##}
+{#            const predictionResultDiv = document.getElementById("predictionResult");#}
+{#            predictionResultDiv.innerHTML = `Prediction: ${result.classification}, Accuracy: ${result.accuracy.toFixed(2)}%`;#}
+{#        }#}
+{#    </script>#}
+{#</body>#}
+{#</html>#}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Photo</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <style>
+        .container {
+            text-align: center;
+        }
+        #uploadedPhotos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        #uploadedPhotos img {
+            max-width: 400px;
+            max-height: 400px;
+            margin: 10px;
+        }
+        #predictionResult {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Photo</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" id="photoInput" name="image" accept="image/*">
+            <button type="button" onclick="uploadImage()">Upload</button>
+        </form>
+
+        <div id="uploadedPhotos"></div>
+        <div id="predictionResult"></div>
+    </div>
+
+    <script>
+        async function uploadImage() {
+            const form = document.getElementById("uploadForm");
+            const formData = new FormData(form);
+
+            const response = await fetch('/classify/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+
+            const result = await response.json();
+
+            const uploadedPhotosDiv = document.getElementById("uploadedPhotos");
+            uploadedPhotosDiv.innerHTML = "";
+            const image = document.createElement("img");
+            image.src = URL.createObjectURL(form.querySelector('#photoInput').files[0]);
+            image.alt = form.querySelector('#photoInput').files[0].name;
+            uploadedPhotosDiv.appendChild(image);
+
+            const predictionResultDiv = document.getElementById("predictionResult");
+            predictionResultDiv.innerHTML = `Prediction: ${result.classification}, Accuracy: ${result.accuracy.toFixed(2)}%`;
+        }
+    </script>
+</body>
+</html>
