@@ -48,3 +48,4 @@ def classify_image(request):
         y_pred = np.argmax(prob_pred)
         predicted_label = class_names[y_pred]
         return JsonResponse({'image_url': image_path, 'classification': predicted_label, 'accuracy': predicted_proba})
+
